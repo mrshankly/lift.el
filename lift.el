@@ -7,7 +7,7 @@
 ;; Version: 0.1.0
 ;; Package-requires: ((emacs "26.1"))
 ;; Keywords: move, text, line
-;; URL: https://github.com/mrshankly/lift
+;; URL: https://github.com/mrshankly/lift.el
 
 ;;; Commentary:
 
