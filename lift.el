@@ -34,20 +34,20 @@
   "Moves the line where point is up or down by `num-lines' lines."
   (cond
    ((< num-lines 0) (progn
-              ;; Move up just one line to handle the edge case when
-              ;; there isn't a line after the current one.
-              (transpose-lines 1)
-              (forward-line -1)
-              ;; Move more if there's anything more to move.
-              (if (< (1+ num-lines) 0)
-                  (transpose-lines (1+ num-lines)))
-              (forward-line -1)))
+                      ;; Move up just one line to handle the edge case when
+                      ;; there isn't a line after the current one.
+                      (transpose-lines 1)
+                      (forward-line -1)
+                      ;; Move more if there's anything more to move.
+                      (if (< (1+ num-lines) 0)
+                          (transpose-lines (1+ num-lines)))
+                      (forward-line -1)))
 
    ((> num-lines 0) (progn
-              ;; No edge case to handle when moving down.
-              (forward-line 1)
-              (transpose-lines num-lines)
-              (forward-line -1)))))
+                      ;; No edge case to handle when moving down.
+                      (forward-line 1)
+                      (transpose-lines num-lines)
+                      (forward-line -1)))))
 
 (defun lift-move-region (direction)
   "Moves the current region up or down by one line."
@@ -72,17 +72,17 @@
     ;; immediately before or after the region up or down the number of lines
     ;; that region has.
     (unless (funcall dont-move-p)
-        (let ((deactivate-mark nil)
-              (column (current-column))
-              (distance (- (mark) (point))))
+      (let ((deactivate-mark nil)
+            (column (current-column))
+            (distance (- (mark) (point))))
 
-          (forward-line direction)
-          (lift-move-line (- num-lines))
-          (forward-line num-lines)
+        (forward-line direction)
+        (lift-move-line (- num-lines))
+        (forward-line num-lines)
 
-          ;; Restore original region.
-          (move-to-column column)
-          (set-mark (+ (point) distance))))
+        ;; Restore original region.
+        (move-to-column column)
+        (set-mark (+ (point) distance))))
 
     ;; Restore original point and mark if we swapped them before.
     (if swap-point-and-mark
