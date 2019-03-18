@@ -49,6 +49,11 @@
                       (transpose-lines num-lines)
                       (forward-line -1)))))
 
+(defmacro lift-with-preserve-point (&rest body)
+  `(let ((column (current-column)))
+     ,@body
+     (move-to-column column)))
+
 (defun lift-move-region (direction)
   "Moves the current region up or down by one line."
   (let ((dont-move-p nil)
@@ -56,10 +61,8 @@
         (num-lines (* direction (lift-count-region-lines))))
 
     (if (< direction 0)
-        ;; Going up.
         (setq swap-point-and-mark (> (point) (mark))
               dont-move-p #'lift-point-in-first-line-p)
-      ;; Going down.
       (setq swap-point-and-mark (< (point) (mark))
             dont-move-p #'lift-point-in-last-line-p))
 
@@ -73,25 +76,19 @@
     ;; that region has.
     (unless (funcall dont-move-p)
       (let ((deactivate-mark nil)
-            (column (current-column))
             (distance (- (mark) (point))))
 
-        (forward-line direction)
-        (lift-move-line (- num-lines))
-        (forward-line num-lines)
+        (lift-with-preserve-point
+         (forward-line direction)
+         (lift-move-line (- num-lines))
+         (forward-line num-lines))
 
         ;; Restore original region.
-        (move-to-column column)
         (set-mark (+ (point) distance))))
 
     ;; Restore original point and mark if we swapped them before.
     (if swap-point-and-mark
         (exchange-point-and-mark))))
-
-(defmacro lift-with-preserve-point (&rest body)
-  `(let ((column (current-column)))
-     ,@body
-     (move-to-column column)))
 
 ;;;###autoload
 (defun lift-lines-up ()
@@ -109,7 +106,7 @@
   (if (use-region-p)
       (lift-move-region +1)
     (unless (lift-point-in-last-line-p)
-      (lift-with-preserve-point (lift-move-line 1)))))
+      (lift-with-preserve-point (lift-move-line +1)))))
 
 (provide 'lift)
 ;;; lift.el ends here
